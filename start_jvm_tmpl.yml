@@ -1,0 +1,85 @@
+---
+- name: Manage WebSphere server script and logs
+  hosts: ~ListOFServers~
+  vars:
+    log_dir: "/tmp/ansible_logs"
+  pre_tasks:
+    - name: Set log timestamp
+      set_fact:
+        log_timestamp: "{{ lookup('pipe', 'date +%d_%b_%Y_%H_%M_%S') }}"
+    - name: Set log file
+      set_fact:
+        log_file: "{{ log_dir }}/{{ ansible_hostname }}_start_{{ jvm_name }}_{{ log_timestamp }}.log"
+  tasks:
+    - name: Create logs directory on Ansible Host if it doesn't exist
+      file:
+        path: "{{ log_dir }}/"
+        state: directory
+      delegate_to: localhost
+
+    - name: Create the directory on Inventory Hosts if it does not exist
+      file:
+        path: "{{ log_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Check for the existence of a PID file
+      stat:
+        path: "{{ profile_path }}/logs/{{ jvm_name }}/{{ jvm_name }}.pid"
+      register: pid_file_status
+
+    - name: Get the PID from the PID file
+      command: "cat {{ profile_path }}/logs/{{ jvm_name }}/{{ jvm_name }}.pid"
+      register: pid
+      when: pid_file_status.stat.exists
+
+    - name: Check if the server is running using PID
+      shell: "ps -p {{ pid.stdout }} -o comm="
+      register: server_status
+      ignore_errors: yes
+      when: pid_file_status.stat.exists
+
+    - name: Define server_status if PID file does not exist
+      set_fact:
+        server_status: {'rc': 1}
+      when: not pid_file_status.stat.exists
+
+    - name: Show a message and exit if the server is running
+      fail:
+        msg: "The server {{ jvm_name }} is already running. Exiting..."
+      when: server_status.rc == 0
+
+    - name: Start {{ jvm_name }}
+      shell: |
+        {
+          echo "$(date '+%Y-%m-%d %H:%M:%S') : Starting {{ jvm_name }}..."
+          {{ profile_path }}/bin/startServer.sh {{ jvm_name }}
+          echo "$(date '+%Y-%m-%d %H:%M:%S') : Script execution is completed."
+        } | tee "{{ log_file }}"
+      register: script_output
+      when: server_status.rc != 0
+
+    - name: Show script output
+      debug:
+        msg: "{{ item }}"
+      with_items: "{{ script_output.stdout.split('\n') }}"
+
+    - name: Print the latest log file name
+      debug:
+        msg: "Latest log file: {{ log_file }}"
+
+    - name: Copy the latest log file to the Ansible host
+      fetch:
+        src: "{{ log_file}}"
+        dest: "{{ log_dir }}/"
+        flat: yes
+      run_once: yes
+
+    - name: Remove logs except the latest 6
+      shell: |
+        find "{{ log_dir }}/" -type f -name '{{ ansible_hostname }}_start_{{ jvm_name }}_*.log' -printf '%T@ %p\n' |
+        sort -k1,1nr |
+        awk 'NR>6 {print $2}' |
+        xargs rm -f
+      run_once: yes
+      no_log: true
