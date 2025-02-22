@@ -1,0 +1,13 @@
+WSVR0605W:WebSphere HungThread
+CWRL0001E:Configuration Error
+HTTP404:Not Found Error
+CWMQ0036E:MQ Exception
+J2CA0023E:J2C Authentication Exception
+WASX80001E:Application Server Not Started
+WASX80003E:Application Server Stopped
+WASX80004E:Application Server Failed to Start
+WASX80005E:Application Server Failed to Stop
+WASX80006E:Application Server Failed to Restart
+WSVR0001I: Server server1 open for e-business
+JMSWMQ1017: IBM MQ call failed
+WMSG0019E: Unable to start MDB Listener IVRAccountInquiryMDBBeanRemote
