@@ -1,6 +1,6 @@
 #!/bin/bash
 # Get hostname and IP address
-#CLUSTER_MEMBER="Mubasher App Vertical-1"
+
 HOSTNAME=`hostname`
 # Get current date and time
 report_time=$(date +"%Y-%m-%d %H:%M:%S")
