@@ -1,6 +1,6 @@
 #!/bin/bash
 # Variables
-REMOTE_IP="10.101.200.90"
+REMOTE_IP="x.x.x.x"
 SOURCE_PATH="/WASAPP/IBM/Applib/cib"
 REMOTE_PATH="/WASAPP/revamp_133_logs"
 SNAPSHOT_FILE=".snapshot"
