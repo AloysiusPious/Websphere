@@ -1,6 +1,6 @@
 #################################################################################################
 #!/bin/bash
-# Author: Aloysius Pious, email: apious@anb.com.sa
+# Author: Aloysius Pious,
 # Version: 1.0
 # Date: 2024-10-29
 # Description: This script to Monitor the Hung Thread and generate Heap Dump automatically
