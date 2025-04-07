@@ -69,13 +69,13 @@ done
 process_info+="</table>"
 # Define MQ and Database hosts and ports
 #declare -a mq_hosts=("mq_host1" "mq_host2")
-declare -a mq_hosts_1=("167.111.4.232")
-declare -a mq_hosts_2=("167.111.4.88")
+declare -a mq_hosts_1=("x.x.x.x")
+declare -a mq_hosts_2=("x.x.x.x")
 ###########
 declare -a mq_ports_1=(11001 11002 11003 11004 11007)
 declare -a mq_ports_2=(11001 11002 11003 11004)
 #############
-declare -a db_hosts=("10.100.203.35" "10.100.203.36" "10.100.203.37" "10.100.203.38" "10.100.203.39" "mubasherdb-scan")
+declare -a db_hosts=("x.x.x.x" "x.x.x.x" "x.x.x.x" "x.x.x.x" "x.x.x.x" "x.x.x.x")
 declare -a db_ports=(5070)
 # Generate Telnet Connection Status for MQ and Database Hosts
 mq_info="<table><tr><th>S.No</th><th>MQ Host IP</th><th>Connection Status</th></tr>"
