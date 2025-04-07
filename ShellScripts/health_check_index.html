@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mubasher Health Check</title>
+    <style>
+{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+        }
+        #container {
+            width: 100%;
+            max-width: 1700px;
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            padding: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        #fileContent {
+            width: 100%;
+            flex-grow: 1;
+            max-height: 500px
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            overflow-y: scroll;
+            background-color: #fff;
+        }
+        h1 {
+            color: #004080;
+            margin-top: 20px;
+        }
+
+        #controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        select, button {
+            padding: 8px 12px;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #004080;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #003366;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mubasher - HealthCheck Reports</h1>
+    <div id="container">
+        <div id="controls">
+            <label for="directoryDropdown">Select Directory:</label>
+            <select id="directoryDropdown" onchange="populateReportsDropdown()">
+                <option value="">Select a directory</option>
+                <option value="app-vertical-1">app-vertical-1</option>
+                <option value="app-vertical-2">app-vertical-2</option>
+                <option value="web-vertical-1">web-vertical-1</option>
+                <option value="web-vertical-2">web-vertical-2</option>
+            </select>
+            <label for="fileDropdown">Select Report:</label>
+            <select id="fileDropdown">
+                <option value="">Select a report</option>
+            </select>
+            <button onclick="loadFile()">Submit</button>
+        </div>
+        <div id="fileContent">Select a report to display its content here.</div>
+    </div>
+  <script>
+    const today = new Date().toISOString().split("T")[0];
+    const fileList = [];
+    // Generate file list for every 30 minutes from 8:00 to 17:00
+    for (let hour = 8; hour <= 16; hour++) {
+        fileList.push(`${hour.toString().padStart(2, '0')}_00_${today}.html`);
+        fileList.push(`${hour.toString().padStart(2, '0')}_30_${today}.html`);
+    }
+    fileList.push(`17_00_${today}.html`); // Add the final 5:00 PM slot
+    function populateReportsDropdown() {
+        const directoryDropdown = document.getElementById("directoryDropdown");
+        const fileDropdown = document.getElementById("fileDropdown");
+        fileDropdown.innerHTML = '<option value="">Select a report</option>';
+        if (directoryDropdown.value) {
+            fileList.forEach(file => {
+                const timeParts = file.split('_');
+                const formattedTime = `${timeParts[0].padStart(2, '0')}:${timeParts[1]}`;
+                const option = document.createElement("option");
+                option.value = directoryDropdown.value + '/' + file;
+                option.textContent = `${today} ${formattedTime}`;
+                fileDropdown.appendChild(option);
+            });
+        }
+    }
+    function loadFile() {
+        const selectedFile = document.getElementById("fileDropdown").value;
+        const fileContentDiv = document.getElementById("fileContent");
+        if (selectedFile) {
+            fetch(selectedFile)
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    } else {
+                        throw new Error("File not found or inaccessible.");
+                    }
+                })
+                .then(content => {
+                    fileContentDiv.innerHTML = content;
+                })
+                .catch(error => {
+                    fileContentDiv.innerHTML = "<p style='color: red;'>Error: " + error.message + "</p>";
+                });
+        } else {
+            fileContentDiv.innerHTML = "<p style='color: red;'>Please select a file to display.</p>";
+        }
+    }
+</script>
+    <footer>
+        <p>Aloysius Pious</p>
+    </footer>
+</body>
+</html>
