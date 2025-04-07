@@ -3,7 +3,7 @@
 # Author: Aloysius Pious
 # Version: 1.0
 # Date: 2024-08-18
-# Description:  to generate Keep and sump files using Linux KIll command
+# Description:  to generate Keep and dump files using Linux KIll command
 # Old Dump directories will be cleaned automatically
 #################################################################################################
 # Check if the script is being run as "wasadm"
